@@ -12,9 +12,10 @@ from src.scripters.router import *
 @click.option('--src', '-i', type=click.File('r'), help='The INI file.')
 @click.option('--dest', '-o', type=str, help='The name of the generated script file.')
 @click.option('--override', is_flag=True, help='Deletes the old file if it is overwritten.')
+@click.option('--log', '-l', is_flag=True, help='Outputs the final script to the console')
 @click.pass_context
 @click.version_option('1.0', '-v', '--version')
-def cli(ctx, src, dest, override):
+def cli(ctx, src, dest, override, log):
     """Generates Cisco scripts based on one of the INI files from the
     examples folder.
 
@@ -23,9 +24,10 @@ def cli(ctx, src, dest, override):
       python gen-cisco.py -i examples/router.ini
       python gen-cisco.py -i examples/router.ini -o r1.txt
       python gen-cisco.py -i examples/router.ini -o r1.txt --override
+      python gen-cisco.py -i examples/router.ini -o r1.txt --print
 
     """
-
+    
     if src:
         if not dest:
             if '/' in src.name:
@@ -38,9 +40,9 @@ def cli(ctx, src, dest, override):
             sys.exit(1)
 
         if 'router' in src.name:
-            Router(src.name, dest).run()
+            Router(src.name, dest).run(log)
         elif 'switch' in src.name:
-            Switch(src.name, dest).run()
+            Switch(src.name, dest).run(log)
         else:
             print("Error: Invalid INI file ({})".format(src.name))
             sys.exit(1)
